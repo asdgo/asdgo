@@ -2,8 +2,6 @@ package queue
 
 import "sync"
 
-// TODO: Introduce Peek and Size methods...
-
 type Queue[T any] struct {
 	Items []T
 	lock  sync.Mutex
