@@ -28,7 +28,7 @@ func New() {
 }
 
 func Get(r *http.Request, key string) string {
-	sess, _ := Instance.Get(r, "checkeroni_session")
+	sess, _ := Instance.Get(r, "asdgo_session")
 
 	if _, ok := sess.Values[key]; !ok {
 		return ""
@@ -42,7 +42,7 @@ func Get(r *http.Request, key string) string {
 }
 
 func Set(w http.ResponseWriter, r *http.Request, key string, value string) {
-	sess, _ := Instance.Get(r, "checkeroni_session")
+	sess, _ := Instance.Get(r, "asdgo_session")
 	sess.Values[key] = value
 
 	err := sess.Save(r, w)
@@ -52,7 +52,7 @@ func Set(w http.ResponseWriter, r *http.Request, key string, value string) {
 }
 
 func Delete(w http.ResponseWriter, r *http.Request, key string) {
-	sess, _ := Instance.Get(r, "checkeroni_session")
+	sess, _ := Instance.Get(r, "asdgo_session")
 	sess.Options.MaxAge = -1
 
 	err := sess.Save(r, w)
