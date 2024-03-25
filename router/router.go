@@ -26,9 +26,6 @@ func New() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RedirectSlashes)
 
-	fs := http.FileServer(http.Dir("static"))
-	r.Handle("/static/*", http.StripPrefix("/static/", fs))
-
 	r.Use(func(next http.Handler) http.Handler {
 		csrfHandler := nosurf.New(next)
 		csrfHandler.SetBaseCookie(http.Cookie{
@@ -55,4 +52,9 @@ func New() {
 	Instance = &Router{
 		r,
 	}
+}
+
+func (r *Router) Static() {
+	fs := http.FileServer(http.Dir("static"))
+	r.Handle("/static/*", http.StripPrefix("/static/", fs))
 }
