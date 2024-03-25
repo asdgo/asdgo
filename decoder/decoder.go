@@ -10,7 +10,7 @@ import (
 
 var Instance *Decoder
 
-func Init() {
+func New() {
 	d := form.NewDecoder()
 
 	Instance = &Decoder{

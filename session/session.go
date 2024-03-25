@@ -10,7 +10,7 @@ import (
 
 var Instance *sessions.CookieStore
 
-func Init() {
+func New() {
 	store := sessions.NewCookieStore([]byte(os.Getenv("APP_KEY")))
 	store.Options = &sessions.Options{
 		HttpOnly: true,

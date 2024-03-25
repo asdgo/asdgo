@@ -15,7 +15,7 @@ type Validator struct {
 
 var Instance *Validator
 
-func Init() {
+func New() {
 	validate := vali.New(vali.WithRequiredStructEnabled())
 
 	Instance = &Validator{
