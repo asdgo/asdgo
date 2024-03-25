@@ -8,7 +8,11 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var Instance *sessions.CookieStore
+type Session struct {
+	*sessions.CookieStore
+}
+
+var Instance *Session
 
 func New() {
 	store := sessions.NewCookieStore([]byte(os.Getenv("APP_KEY")))
@@ -20,7 +24,7 @@ func New() {
 		Secure:   true,
 	}
 
-	Instance = store
+	Instance = &Session{store}
 }
 
 func Get(r *http.Request, key string) string {

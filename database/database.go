@@ -7,7 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
-var Instance *gorm.DB
+var Instance *Database
+
+type Database struct {
+	*gorm.DB
+}
 
 func New() {
 	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
@@ -18,5 +22,7 @@ func New() {
 		panic(err)
 	}
 
-	Instance = db
+	Instance = &Database{
+		db,
+	}
 }

@@ -8,6 +8,7 @@ require (
 	github.com/go-playground/form v3.1.4+incompatible
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/gorilla/sessions v1.2.2
+	github.com/joho/godotenv v1.5.1
 	github.com/justinas/nosurf v1.1.1
 	golang.org/x/crypto v0.19.0
 	gorm.io/driver/postgres v1.5.7
