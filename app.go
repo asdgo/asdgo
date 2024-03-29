@@ -15,6 +15,8 @@ import (
 type Config struct {
 	Database gorm.Dialector
 
+	CsrfExempts []string
+
 	UseMailer bool
 }
 
@@ -25,7 +27,7 @@ func New(config Config) {
 		database.New(config.Database)
 	}
 
-	router.New()
+	router.New(config.CsrfExempts)
 	template.New()
 	session.New()
 
