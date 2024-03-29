@@ -50,8 +50,9 @@ func New() {
 	}
 }
 
-func (m *Mailer) Send(recipient string, template string) error {
+func (m *Mailer) Send(recipient string, subject string, template string) error {
 	msg := mail.NewMsg()
+	msg.Subject(subject)
 
 	err := msg.To(recipient)
 	if err != nil {
