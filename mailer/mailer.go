@@ -64,7 +64,7 @@ func (m *Mailer) Send(recipient string, subject string, template string) error {
 		return err
 	}
 
-	msg.SetBodyString(mail.TypeTextPlain, template)
+	msg.SetBodyString(mail.TypeTextHTML, template)
 
 	for i := 1; i <= 3; i++ {
 		err = m.client.DialAndSend(msg)
