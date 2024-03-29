@@ -9,18 +9,20 @@ import (
 	"github.com/asdgo/asdgo/template"
 	"github.com/asdgo/asdgo/validator"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm"
 )
 
-type AsdgoConfig struct {
-	UseDatabase bool
-	UseMailer   bool
+type Config struct {
+	Database gorm.Dialector
+
+	UseMailer bool
 }
 
-func New(config AsdgoConfig) {
+func New(config Config) {
 	godotenv.Load()
 
-	if config.UseDatabase {
-		database.New()
+	if config.Database != nil {
+		database.New(config.Database)
 	}
 
 	router.New()

@@ -1,9 +1,6 @@
 package database
 
 import (
-	"os"
-
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -13,10 +10,8 @@ type Database struct {
 	*gorm.DB
 }
 
-func New() {
-	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
-		TranslateError: true,
-	})
+func New(dialector gorm.Dialector) {
+	db, err := gorm.Open(dialector)
 
 	if err != nil {
 		panic(err)
