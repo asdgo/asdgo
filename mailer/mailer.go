@@ -20,7 +20,11 @@ func New() {
 	from := os.Getenv("MAIL_FROM_ADDRESS")
 	username := os.Getenv("MAIL_USERNAME")
 	password := os.Getenv("MAIL_PASSWORD")
-	portEnv := os.Getenv("MAIL_HOST")
+	portEnv := os.Getenv("MAIL_PORT")
+
+	if host == "" || from == "" || username == "" || password == "" || portEnv == "" {
+		panic("Missing mail configuration")
+	}
 
 	port, err := strconv.Atoi(portEnv)
 	if err != nil {
