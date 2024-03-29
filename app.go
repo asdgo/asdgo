@@ -3,6 +3,7 @@ package asdgo
 import (
 	"github.com/asdgo/asdgo/database"
 	"github.com/asdgo/asdgo/decoder"
+	"github.com/asdgo/asdgo/mailer"
 	"github.com/asdgo/asdgo/router"
 	"github.com/asdgo/asdgo/session"
 	"github.com/asdgo/asdgo/template"
@@ -10,16 +11,28 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func New() {
+type AsdgoConfig struct {
+	UseDatabase bool
+	UseMailer   bool
+}
+
+func New(config AsdgoConfig) {
 	godotenv.Load()
 
-	database.New()
+	if config.UseDatabase {
+		database.New()
+	}
+
 	router.New()
 	template.New()
 	session.New()
 
 	decoder.New()
 	validator.New()
+
+	if config.UseMailer {
+		mailer.New()
+	}
 }
 
 func DB() *database.Database {
@@ -44,4 +57,8 @@ func Validator() *validator.Validator {
 
 func Decoder() *decoder.Decoder {
 	return decoder.Instance
+}
+
+func Mailer() *mailer.Mailer {
+	return mailer.Instance
 }
