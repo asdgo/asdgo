@@ -2,6 +2,7 @@ package asdgo
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/asdgo/asdgo/mail"
 	"github.com/asdgo/asdgo/session"
 	"github.com/asdgo/asdgo/template"
-	validation "github.com/asdgo/asdgo/validate"
+	"github.com/asdgo/asdgo/validate"
 
 	echo_session "github.com/labstack/echo-contrib/session"
 
@@ -31,6 +32,9 @@ type Config struct {
 
 	SessionName string
 
+	CsrfName    string
+	CsrfSkipper func(c echo.Context) bool
+
 	TemplateNotFound templ.Component
 }
 
@@ -40,7 +44,7 @@ func Env() {
 
 func New(config *Config) *Asdgo {
 	session.New(config.SessionName)
-	validation.New()
+	validate.New()
 	hash.New()
 	mail.New()
 
@@ -72,6 +76,25 @@ func New(config *Config) *Asdgo {
 			return strings.HasPrefix(c.Path(), "/static")
 		},
 		Format: "method=${method}, uri=${uri}, status=${status} (${remote_ip})\n",
+	}))
+
+	if config.CsrfName == "" {
+		config.CsrfName = "asdgo_csrf"
+	}
+	e.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
+		TokenLookup: fmt.Sprintf("cookie:%s", config.CsrfName),
+		Skipper: func(c echo.Context) bool {
+			if config.CsrfSkipper == nil {
+				return false
+			}
+
+			return config.CsrfSkipper(c)
+		},
+		CookieName:     config.CsrfName,
+		CookiePath:     "/",
+		CookieSecure:   true,
+		CookieHTTPOnly: true,
+		CookieSameSite: http.SameSiteLaxMode,
 	}))
 
 	e.Use(echo_session.Middleware(session.Instance.Store()))
@@ -113,8 +136,8 @@ func Hash() *hash.Hash {
 	return hash.Instance
 }
 
-func Validator() *validation.Validator {
-	return validation.Instance
+func Validator() *validate.Validator {
+	return validate.Instance
 }
 
 func Mailer() *mail.Mailer {

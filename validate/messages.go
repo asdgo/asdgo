@@ -1,4 +1,4 @@
-package validation
+package validate
 
 var Messages = map[string]string{
 	"email":    "The %s field must be an valid email%s",

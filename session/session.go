@@ -27,6 +27,10 @@ func New(name string) {
 		Secure:   true,
 	}
 
+	if name == "" {
+		name = "asdgo_session"
+	}
+
 	Instance = &Session{
 		Name:  name,
 		store: store,
