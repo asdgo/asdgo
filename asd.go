@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/asdgo/asdgo/ctx"
@@ -46,7 +47,10 @@ func New(config *Config) *Asdgo {
 	session.New(config.SessionName)
 	validate.New()
 	hash.New()
-	mail.New()
+
+	if os.Getenv("MAIL_HOST") != "" {
+		mail.New()
+	}
 
 	e := echo.New()
 	e.HideBanner = true
@@ -59,6 +63,11 @@ func New(config *Config) *Asdgo {
 			errorCode := httpError.Code
 			switch errorCode {
 			case http.StatusNotFound:
+				if config.TemplateNotFound == nil {
+					c.String(http.StatusNotFound, "Not Found")
+					return
+				}
+
 				template.Render(c, http.StatusNotFound, config.TemplateNotFound)
 			default:
 				// TODO: handle any other cases

@@ -1,6 +1,8 @@
 package schedule
 
-import "time"
+import (
+	"time"
+)
 
 type Scheduler struct{}
 
