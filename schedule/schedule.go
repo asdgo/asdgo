@@ -1,4 +1,4 @@
-package scheduler
+package schedule
 
 import "time"
 
@@ -8,11 +8,8 @@ func (s *Scheduler) Start(interval time.Duration, f func()) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
-	for {
-		select {
-		case <-ticker.C:
-			f()
-		}
+	for range ticker.C {
+		f()
 	}
 }
 

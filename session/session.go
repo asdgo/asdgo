@@ -6,15 +6,18 @@ import (
 	"os"
 
 	"github.com/gorilla/sessions"
+	"github.com/labstack/echo/v4"
 )
 
 type Session struct {
-	*sessions.CookieStore
+	Name string
+
+	store *sessions.CookieStore
 }
 
 var Instance *Session
 
-func New() {
+func New(name string) {
 	store := sessions.NewCookieStore([]byte(os.Getenv("APP_KEY")))
 	store.Options = &sessions.Options{
 		HttpOnly: true,
@@ -24,11 +27,18 @@ func New() {
 		Secure:   true,
 	}
 
-	Instance = &Session{store}
+	Instance = &Session{
+		Name:  name,
+		store: store,
+	}
 }
 
-func Get(r *http.Request, key string) string {
-	sess, _ := Instance.Get(r, "asdgo_session")
+func (s *Session) Store() *sessions.CookieStore {
+	return s.store
+}
+
+func (s *Session) Get(c echo.Context, key string) string {
+	sess, _ := s.store.Get(c.Request(), s.Name)
 
 	if _, ok := sess.Values[key]; !ok {
 		return ""
@@ -41,21 +51,21 @@ func Get(r *http.Request, key string) string {
 	return ""
 }
 
-func Set(w http.ResponseWriter, r *http.Request, key string, value string) {
-	sess, _ := Instance.Get(r, "asdgo_session")
+func (s *Session) Set(c echo.Context, key string, value string) {
+	sess, _ := s.store.Get(c.Request(), s.Name)
 	sess.Values[key] = value
 
-	err := sess.Save(r, w)
+	err := sess.Save(c.Request(), c.Response())
 	if err != nil {
 		fmt.Printf("[SESSION ERROR]: %v\n", err)
 	}
 }
 
-func Delete(w http.ResponseWriter, r *http.Request, key string) {
-	sess, _ := Instance.Get(r, "asdgo_session")
+func (s *Session) Delete(c echo.Context, key string) {
+	sess, _ := s.store.Get(c.Request(), s.Name)
 	sess.Options.MaxAge = -1
 
-	err := sess.Save(r, w)
+	err := sess.Save(c.Request(), c.Response())
 	if err != nil {
 		fmt.Printf("[SESSION ERROR]: %v\n", err)
 	}

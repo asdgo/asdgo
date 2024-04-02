@@ -1,4 +1,4 @@
-package password
+package hash
 
 import (
 	"errors"
@@ -6,7 +6,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Hash(plaintextPassword string) (string, error) {
+type Hash struct{}
+
+var Instance *Hash
+
+func New() {
+	Instance = &Hash{}
+}
+
+func (h *Hash) Bcrypt(plaintextPassword string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(plaintextPassword), 12)
 	if err != nil {
 		return "", err
@@ -15,7 +23,7 @@ func Hash(plaintextPassword string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func Matches(plaintextPassword, hashedPassword string) (bool, error) {
+func (h *Hash) BcryptMatches(plaintextPassword, hashedPassword string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plaintextPassword))
 	if err != nil {
 		switch {
