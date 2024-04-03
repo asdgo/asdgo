@@ -7,15 +7,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/asdgo/asdgo/ctx"
-	"github.com/asdgo/asdgo/database"
-	"github.com/asdgo/asdgo/hash"
-	"github.com/asdgo/asdgo/mail"
-	"github.com/asdgo/asdgo/session"
-	"github.com/asdgo/asdgo/template"
-	"github.com/asdgo/asdgo/validate"
+	"github.com/asdgo/asdgo/acontext"
+	"github.com/asdgo/asdgo/adatabase"
+	"github.com/asdgo/asdgo/ahash"
+	"github.com/asdgo/asdgo/amail"
+	"github.com/asdgo/asdgo/asession"
+	"github.com/asdgo/asdgo/atemplate"
+	"github.com/asdgo/asdgo/avalidate"
 
-	echo_session "github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo-contrib/session"
 
 	"github.com/a-h/templ"
 	"github.com/joho/godotenv"
@@ -44,12 +44,12 @@ func Env() {
 }
 
 func New(config *Config) *Asdgo {
-	session.New(config.SessionName)
-	validate.New()
-	hash.New()
+	asession.New(config.SessionName)
+	avalidate.New()
+	ahash.New()
 
 	if os.Getenv("MAIL_HOST") != "" {
-		mail.New()
+		amail.New()
 	}
 
 	e := echo.New()
@@ -68,7 +68,7 @@ func New(config *Config) *Asdgo {
 					return
 				}
 
-				template.Render(c, http.StatusNotFound, config.TemplateNotFound)
+				atemplate.Render(c, http.StatusNotFound, config.TemplateNotFound)
 			default:
 				// TODO: handle any other cases
 			}
@@ -106,17 +106,17 @@ func New(config *Config) *Asdgo {
 		CookieSameSite: http.SameSiteLaxMode,
 	}))
 
-	e.Use(echo_session.Middleware(session.Instance.Store()))
+	e.Use(session.Middleware(asession.Instance.Store()))
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			userID := session.Instance.Get(c, "user_id")
+			userID := asession.Instance.Get(c, "user_id")
 
 			c.Set("userID", userID)
 
 			// TODO: Figure out how todo this better...
 			c.SetRequest(
 				c.Request().WithContext(
-					context.WithValue(c.Request().Context(), ctx.UserIDKey, userID),
+					context.WithValue(c.Request().Context(), acontext.UserIDKey, userID),
 				),
 			)
 
@@ -125,7 +125,7 @@ func New(config *Config) *Asdgo {
 	})
 
 	if config.Database != nil {
-		database.New(config.Database)
+		adatabase.New(config.Database)
 	}
 
 	return &Asdgo{
@@ -133,22 +133,22 @@ func New(config *Config) *Asdgo {
 	}
 }
 
-func Db() *database.Database {
-	return database.Instance
+func Db() *adatabase.Database {
+	return adatabase.Instance
 }
 
-func Session() *session.Session {
-	return session.Instance
+func Session() *asession.Session {
+	return asession.Instance
 }
 
-func Hash() *hash.Hash {
-	return hash.Instance
+func Hash() *ahash.Hash {
+	return ahash.Instance
 }
 
-func Validator() *validate.Validator {
-	return validate.Instance
+func Validator() *avalidate.Validator {
+	return avalidate.Instance
 }
 
-func Mailer() *mail.Mailer {
-	return mail.Instance
+func Mailer() *amail.Mailer {
+	return amail.Instance
 }

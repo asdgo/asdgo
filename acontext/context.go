@@ -1,9 +1,9 @@
-package ctx
+package acontext
 
 import (
 	"context"
 
-	"github.com/asdgo/asdgo/database"
+	"github.com/asdgo/asdgo/adatabase"
 
 	"github.com/labstack/echo/v4"
 )
@@ -41,9 +41,9 @@ func UserID[T any](ctx T) string {
 	return ""
 }
 
-func User(ctx echo.Context) database.User {
-	var user database.User
-	database.Instance.Find(&user, "id = ?", UserID(ctx))
+func User(ctx echo.Context) adatabase.User {
+	var user adatabase.User
+	adatabase.Instance.Find(&user, "id = ?", UserID(ctx))
 
 	return user
 }

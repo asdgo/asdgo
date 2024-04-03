@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/asdgo/asdgo/ctx"
+	"github.com/asdgo/asdgo/acontext"
 
 	"github.com/labstack/echo/v4"
 )
@@ -11,7 +11,7 @@ import (
 func Authenticate() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if !ctx.UserIsAuthenticated(c) {
+			if !acontext.UserIsAuthenticated(c) {
 				return c.Redirect(http.StatusFound, "/auth/login")
 			}
 

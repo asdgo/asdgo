@@ -1,4 +1,4 @@
-package template
+package atemplate
 
 import (
 	"github.com/a-h/templ"
