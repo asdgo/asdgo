@@ -22,7 +22,7 @@ func CsrfToken(ctx echo.Context) string {
 }
 
 func UserIsAuthenticated[T any](ctx T) bool {
-	return UserID[T](ctx) != ""
+	return UserID(ctx) != ""
 }
 
 func UserID[T any](ctx T) string {
@@ -41,7 +41,7 @@ func UserID[T any](ctx T) string {
 	return ""
 }
 
-func User(ctx echo.Context) adatabase.User {
+func User[T any](ctx T) adatabase.User {
 	var user adatabase.User
 	adatabase.Instance.Find(&user, "id = ?", UserID(ctx))
 
